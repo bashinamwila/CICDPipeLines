@@ -1,0 +1,29 @@
+name: Backend Tests for CICDPipelines
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  backend-tests:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: 9.0.x  # or adjust if using a different version
+
+      - name: Restore dependencies
+        run: dotnet restore CICDPipelines.sln  # change this to your actual .sln file
+
+      - name: Build backend projects
+        run: dotnet build CICDPipelines.sln --configuration Release --no-restore
+
+      - name: Run unit and integration tests
+        run: dotnet test CICDPipelines.sln --configuration Release --no-build --verbosity normal
